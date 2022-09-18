@@ -2,12 +2,17 @@ import yandex_back
 import os
 
 
+def __get_newest_folder(based: str, way: str) -> str:
+    return way[len(based)::] + "/"
+
+
 def upload_directory(uploading_from: str, uploading_to: str):
-    # upload_directory("/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds/", "f4/f6/")
-    all_files_from_directory = \
-        list(filter(lambda x: x[0] != ".", os.listdir(uploading_from)))
-    for file in all_files_from_directory:
-        yandex_back.upload_file(uploading_from+"/"+file, uploading_to+file)
-
-
+    # upload_directory("/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds", "/f7")
+    based_folder = uploading_from[0:len(uploading_from) - len(uploading_from.split("/")[-1]) - 1]
+    for address, dirs, files in os.walk(uploading_from):
+        current_route = uploading_to + __get_newest_folder(based_folder, address)
+        yandex_back.create_folder(current_route)
+        all_files_for_current_dir = list(filter(lambda x: x[0] != ".", files))
+        for file in all_files_for_current_dir:
+            yandex_back.upload_file(address + "/" + file, current_route + file)
 

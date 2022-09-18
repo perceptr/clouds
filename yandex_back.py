@@ -102,4 +102,4 @@ def get_info_about_file_or_folder(path_to_file_or_folder: str):
         print(f"{i+1})Name: {items[i]['name']}, Type: {items[i]['type']}")
 
 
-
+# upload_file("meadow.jpeg", "/f4/f6/f8", True)
