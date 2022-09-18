@@ -24,8 +24,11 @@ def move_folder_or_file(path_from: str, path_to: str):
     return resp.status_code, resp.url
 
 
-def get_user_disk_info_bytes() -> dict[str: int]:
-    return requests.get(url=URL, headers=headers).json()
+def get_user_disk_info_bytes() -> str:
+    response = requests.get(url=URL, headers=headers).json()
+    return f"Total space: {response['total_space']} bytes\nTrash size: {response['trash_size']} bytes\n" \
+           f"Used space: {response['used_space']} bytes\n" \
+           f"Free space: {response['total_space'] - response['used_space']} bytes"
 
 
 def copy_file_or_folder(path_from: str, path_to_create: str):
@@ -91,4 +94,15 @@ def download_file(file_name: str, save_directory: str):
         raise Exception(f"Failed to download file {file_name}!")
 
 
+def get_info_about_file_or_folder(path_to_file_or_folder: str):
+    # get_info_about_file_or_folder("/")
+    response = requests.get(f"{URL}/resources?path={path_to_file_or_folder}", headers=headers).json()
+    items = response["_embedded"]["items"]
+    for i in range(len(items)):
+        print(f"{i+1})Name: {items[i]['name']}, Type: {items[i]['type']}")
 
+
+# upload_file("meadow.jpeg", "/f4/meadow_new.jpeg")
+
+
+remove_folder_or_file("/f4/meadow_new.jpeg", True)
