@@ -48,6 +48,7 @@ def get_files_list(limit: int = 20,
                                      "image,"
                                      "web,"
                                      "unknown"):
+    # TODO make a pretty print of this, maybe add listing of specified directories
     # print(get_files_list(20, "video")["items"][0]["name"])
     return requests.get(f"{URL}/resources/files/?limit={limit}&media_type={media_type}", headers=headers).json()
 
@@ -84,14 +85,14 @@ def __get_url_for_downloading(path_to_download_from: str) -> str:
     return requests.get(f"{URL}/resources/download?path={path_to_download_from}", headers=headers).json()["href"]
 
 
-def download_file(file_name: str, save_directory: str):
+def download_file(path_to_downloading_file: str, save_directory: str):
     # download_file("meadow2213.jpeg", "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/downloaded_pics")
     try:
-        got_file = requests.get(__get_url_for_downloading(file_name)).content
-        with open(save_directory+"/"+file_name, "wb") as file:
+        got_file = requests.get(__get_url_for_downloading(path_to_downloading_file)).content
+        with open(save_directory + "/" + path_to_downloading_file.split("/")[-1], "wb") as file:
             file.write(got_file)
     except KeyError:
-        raise Exception(f"Failed to download file {file_name}!")
+        raise Exception(f"Failed to download file {path_to_downloading_file}!")
 
 
 def get_info_about_file_or_folder(path_to_file_or_folder: str):
@@ -102,4 +103,10 @@ def get_info_about_file_or_folder(path_to_file_or_folder: str):
         print(f"{i+1})Name: {items[i]['name']}, Type: {items[i]['type']}")
 
 
+clean_trash()
 # upload_file("meadow.jpeg", "/f4/f6/f8", True)
+
+# upload_file("meadow.jpeg", "/f4/f5/meadow_FOR_GLEB.jpeg")
+# download_file("f4/f5/Москва.jpg", "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/downloaded_pics")
+
+# print(get_public_url("f4/f5/Москва.jpg"))
