@@ -39,11 +39,11 @@ class SelectelAPI:
                 print("Failed uploading file")
 
     @staticmethod
-    def get_all_files_list() -> str:
+    def get_all_files_list():
         url = "https://api.selcdn.ru/v1/SEL_230657/pycloudstorage"
         headers = {"X-Auth-Token": SelectelAPI.__get_auth_token()}
 
-        return requests.get(url, headers=headers).text
+        print(requests.get(url, headers=headers).text)
 
     @staticmethod
     def upload_directory(uploading_from: str, uploading_to: str):
