@@ -1,6 +1,6 @@
 import requests
 import os
-
+import zipfile
 
 class SelectelAPI:
     @staticmethod
@@ -28,13 +28,20 @@ class SelectelAPI:
             raise Exception(f"Failed to download file {path_to_downloading_file}!")
 
     @staticmethod
-    def upload_file(path_to_file_pc: str, selectel_path_to_folder: str):
+    def upload_file(path_to_file_pc: str, selectel_path_to_folder: str, zipped=False):
         file_name = path_to_file_pc.split("/")[-1]
         url = "https://api.selcdn.ru/v1/SEL_230657/pycloudstorage" + selectel_path_to_folder + "/" + file_name
         headers = {"X-Auth-Token": SelectelAPI.__get_auth_token()}
         with open(path_to_file_pc, 'rb') as file:
             try:
-                requests.put(url, headers=headers, files={'file': file})
+                if zipped:
+                    with zipfile.ZipFile(file_name + ".zip", "w") as zip_file:
+                        zip_file.write(file_name)
+                    with open(file_name + ".zip", 'rb') as zip_file:
+                        requests.put(url, headers=headers, files={'file': zip_file})
+                    os.remove(file_name + ".zip")
+                else:
+                    requests.put(url, headers=headers, files={'file': file})
             except KeyError:
                 print("Failed uploading file")
 
@@ -46,8 +53,19 @@ class SelectelAPI:
         print(requests.get(url, headers=headers).text)
 
     @staticmethod
-    def upload_directory(uploading_from: str, uploading_to: str):
+    def upload_directory(uploading_from: str, uploading_to: str, zipped: bool):
         # upload_directory_selectel("/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds", "/")
+        if zipped:
+            with zipfile.ZipFile(uploading_from + ".zip", "w") as zip_file:
+                for root, dirs, files in os.walk(uploading_from):
+                    for file in files:
+                        zip_file.write(os.path.join(root, file))
+
+                SelectelAPI.upload_file(uploading_from + ".zip", uploading_to + "/" + uploading_from.split("/")[-1],
+                                        zipped=False)
+                os.remove(uploading_from + ".zip")
+                return
+
         based_folder = uploading_from[0:len(uploading_from) - len(uploading_from.split("/")[-1]) - 1]
         for address, dirs, files in os.walk(uploading_from):
             current_route = uploading_to + address[len(based_folder)::] + "/"

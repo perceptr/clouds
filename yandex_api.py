@@ -1,5 +1,6 @@
 import requests
 import os
+import zipfile
 
 
 class MyYaDiskAPI:
@@ -69,11 +70,10 @@ class MyYaDiskAPI:
                             headers=self.headers)
 
     def __get_url_for_uploading(self, path_to_upload: str, replace=False) -> str:
-        print(f"{self.URL}/resources/upload?path={path_to_upload}&overwrite={replace}'")
         return requests.get(f'{self.URL}/resources/upload?path={path_to_upload}&overwrite={replace}',
                             headers=self.headers).json()["href"]
 
-    def upload_file(self, path_to_file: str, path_to_folder_on_yadisk: str, replace=False):
+    def upload_file(self, path_to_file: str, path_to_folder_on_yadisk: str, zipped=False, replace=False):
         # upload_file("beach.jpeg", "/f131/пляж")
         # upload_file("/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds/test_folder/too/mustang.jpeg",
         # "/f4/f6/mustang_a.jpeg")
@@ -81,7 +81,14 @@ class MyYaDiskAPI:
         res = self.__get_url_for_uploading(path_to_folder_on_yadisk, replace)
         with open(path_to_file, 'rb') as f:
             try:
-                requests.put(res, files={'file': f})
+                if zipped:
+                    with zipfile.ZipFile(path_to_file + ".zip", "w") as zip_file:
+                        zip_file.write(path_to_file)
+                    with open(path_to_file + ".zip", 'rb') as zip_file:
+                        requests.put(res, files={'file': zip_file})
+                    os.remove(path_to_file + ".zip")
+                else:
+                    requests.put(res, files={'file': f})
             except KeyError:
                 print(res)
 
@@ -112,14 +119,24 @@ class MyYaDiskAPI:
     def __get_newest_folder(based: str, way: str) -> str:
         return way[len(based)::] + "/"
 
-    def upload_directory(self, uploading_from: str, uploading_to: str):
+    def upload_directory(self, uploading_from: str, uploading_to: str, zipped: bool):
         # upload_directory("/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds", "/f7")
         based_folder = uploading_from[0:len(uploading_from) - len(uploading_from.split("/")[-1]) - 1]
+        if zipped:
+            with zipfile.ZipFile(uploading_from + ".zip", "w") as zip_file:
+                for root, dirs, files in os.walk(uploading_from):
+                    for file in files:
+                        zip_file.write(os.path.join(root, file))
+
+                self.upload_file(uploading_from + ".zip", uploading_to + "/" + uploading_from.split("/")[-1],
+                                 zipped=False)
+                os.remove(uploading_from + ".zip")
+                return
+
         for address, dirs, files in os.walk(uploading_from):
             current_route = uploading_to + self.__get_newest_folder(based_folder, address)
             self.create_folder(current_route)
             files_except_hidden = list(filter(lambda x: x[0] != ".", files))
             for file in files_except_hidden:
                 self.upload_file(address + "/" + file, current_route + file)
-
 
