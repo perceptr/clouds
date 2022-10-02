@@ -16,7 +16,6 @@ parser.add_argument("--dir_up", help="enter the way you want to upload your file
 
 parser.add_argument("--dir_down", help="enter the way you want to download file")
 parser.add_argument("--download_file", help="enter the way to file you want to download")
-
 parser.add_argument("-p", "--platform", help="put y (or yandex) / s (or selectel) /"
                                              " or v (vk) when managing files")
 
@@ -28,24 +27,46 @@ args = parser.parse_args()
 
 def create_yadisk(url="https://cloud-api.yandex.net/v1/disk",
                   token="y0_AgAAAABkpnbQAADLWwAAAADPHaXMCTSyU3M8TwucAzOBNPZS6nGMg0A") -> yandex_api.MyYaDiskAPI:
+    """
+    Creates yandex disk object
+    :param url: url to yandex disk
+    :param token: token to yandex disk
+    :return: yandex disk object
+    """
 
     return yandex_api.MyYaDiskAPI(url, token)
 
 
-def upload_file(path_to_file: str, path_to_upload_disk: str, platform: str, zipped=False):
+def upload_file(path_to_file: str, path_to_upload_disk: str, platform: str, zipped=False) -> None:
+    """
+    Uploads file to cloud
+    :param path_to_file: path to file on your pc
+    :param path_to_upload_disk:  path to upload file on cloud
+    :param platform: cloud platform
+    :param zipped: if you want to zip file, just print -z zip
+    :return: void
+    """
     if platform == "y" or platform == "yandex":
         my_disk = create_yadisk()
         my_disk.upload_file(path_to_file, path_to_upload_disk, zipped)
     elif platform == "s" or platform == "selectel":
-        selectel_api.SelectelAPI.upload_file(path_to_file, path_to_upload_disk, zipped)  # zipped
+        selectel_api.SelectelAPI.upload_file(path_to_file, path_to_upload_disk, zipped)
     elif platform == "v" or platform == "vk":
         vk = vk_api.VkCloudAPI()
-        vk.upload_file(path_to_file, path_to_upload_disk, zipped)  # zipped
+        vk.upload_file(path_to_file, path_to_upload_disk, zipped)
     else:
         raise Exception("Wrong input, try again!")
 
 
-def upload_directory(uploading_from_pc_dir: str, uploading_to_disk_path: str, platform: str, zip_arg: str):
+def upload_directory(uploading_from_pc_dir: str, uploading_to_disk_path: str, platform: str, zip_arg: str) -> None:
+    """
+    Uploads directory to cloud
+    :param uploading_from_pc_dir: path to directory on your pc
+    :param uploading_to_disk_path: path to upload directory on cloud
+    :param platform: cloud platform
+    :param zip_arg: if you want to zip directory, just print -z zip
+    :return: void
+    """
     zipped = zip_arg == "zip"
     if platform == "y" or platform == "yandex":
         my_disk = create_yadisk()
@@ -59,7 +80,14 @@ def upload_directory(uploading_from_pc_dir: str, uploading_to_disk_path: str, pl
         raise Exception("Wrong platform, try again!")
 
 
-def download_file(path_to_downloading_file: str, save_directory: str, platform: str):
+def download_file(path_to_downloading_file: str, save_directory: str, platform: str) -> None:
+    """
+    Downloads file from cloud
+    :param path_to_downloading_file: path to file on cloud
+    :param save_directory: path to save file on your pc
+    :param platform: cloud platform
+    :return: void
+    """
     if platform == "y" or platform == "yandex":
         my_disk = create_yadisk()
         my_disk.download_file(path_to_downloading_file, save_directory)
@@ -72,7 +100,12 @@ def download_file(path_to_downloading_file: str, save_directory: str, platform: 
         raise Exception("Wrong arguments entered!")
 
 
-def get_files_list(platform: str):
+def get_files_list(platform: str) -> None:
+    """
+    Shows all files in cloud
+    :param platform: cloud platform
+    :return: void
+    """
     if platform == "y" or platform == "yandex":
         my_disk = create_yadisk()
         my_disk.get_files_list()
@@ -95,6 +128,3 @@ elif args.download_file and args.dir_down and args.platform:
     download_file(args.download_file, args.dir_down, args.platform)
 elif args.info and args.platform:
     get_files_list(args.platform)
-
-
-# upload_directory("/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds", "/f7")
