@@ -121,3 +121,5 @@ class MyYaDiskAPI:
             files_except_hidden = list(filter(lambda x: x[0] != ".", files))
             for file in files_except_hidden:
                 self.upload_file(address + "/" + file, current_route + file)
+
+

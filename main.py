@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser(
             'PyClouds',
             description='PyClouds - App for Clouds',
             epilog='Thank you for choosing PyClouds!',
-            add_help=False,
+            add_help=True,
             )
 
 parser.add_argument("--upload_file", help="enter the way to file you want to upload: /a/b/file.ext")
@@ -82,4 +82,5 @@ elif args.info and args.platform:
 # "/f4/f7/mustang_a.jpeg")
 
 # upload_directory("/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds", "/f4/f7/f8")
+
 
