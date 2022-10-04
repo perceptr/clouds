@@ -19,6 +19,7 @@ lib64/
 parts/
 sdist/
 var/
+.idea/
 wheels/
 pip-wheel-metadata/
 share/python-wheels/
@@ -128,5 +129,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-.idea/
-.DS_Store
+**/.DS_Store
+**/.idea/
