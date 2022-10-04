@@ -8,7 +8,7 @@ class SelectelAPI:
     Class for working with Selectel cloud object storage
     """
     @staticmethod
-    def __get_auth_token() -> str:
+    def get_auth_token() -> str:
         """
         Gets auth token from environment variable
         :return: auth token
@@ -27,7 +27,7 @@ class SelectelAPI:
         :param save_directory: path to save file on your pc
         :return: void
         """
-        headers = {"X-Auth-Token": SelectelAPI.__get_auth_token()}
+        headers = {"X-Auth-Token": SelectelAPI.get_auth_token()}
         res = requests.get(f"https://api.selcdn.ru/v1/SEL_230657/pycloudstorage/{path_to_downloading_file}",
                            headers=headers)
 
@@ -39,40 +39,45 @@ class SelectelAPI:
             raise Exception(f"Failed to download file {path_to_downloading_file}!")
 
     @staticmethod
-    def upload_file(path_to_file_pc: str, selectel_path_to_folder: str, zipped=False) -> None:
+    def upload_file(path_to_file_pc: str, selectel_path_to_folder: str, zipped=False) -> int:
         """
         Uploads file to Selectel cloud object storage
         :param path_to_file_pc: path to file on your pc
         :param selectel_path_to_folder: path to upload file on cloud
         :param zipped: if you want to zip file, just print -z zip
-        :return: void
+        :return: int status code
         """
         file_name = path_to_file_pc.split("/")[-1]
         url = "https://api.selcdn.ru/v1/SEL_230657/pycloudstorage" + selectel_path_to_folder + "/" + file_name
-        headers = {"X-Auth-Token": SelectelAPI.__get_auth_token()}
+        headers = {"X-Auth-Token": SelectelAPI.get_auth_token()}
         with open(path_to_file_pc, 'rb') as file:
             try:
                 if zipped:
                     with zipfile.ZipFile(file_name + ".zip", "w") as zip_file:
                         zip_file.write(file_name)
                     with open(file_name + ".zip", 'rb') as zip_file:
-                        requests.put(url, headers=headers, files={'file': zip_file})
+                        resp = requests.put(url, headers=headers, files={'file': zip_file})
                     os.remove(file_name + ".zip")
+                    return resp.status_code
                 else:
-                    requests.put(url, headers=headers, files={'file': file})
+                    resp = requests.put(url, headers=headers, files={'file': file})
+                    return resp.status_code
             except KeyError:
                 print("Failed uploading file")
+                return 418
 
     @staticmethod
-    def get_all_files_list() -> None:
+    def get_all_files_list() -> int:
         """
         Gets list of all files in cloud
         :return: prints list of files
         """
         url = "https://api.selcdn.ru/v1/SEL_230657/pycloudstorage"
-        headers = {"X-Auth-Token": SelectelAPI.__get_auth_token()}
+        headers = {"X-Auth-Token": SelectelAPI.get_auth_token()}
 
-        print(requests.get(url, headers=headers).text)
+        resp = requests.get(url, headers=headers)
+        print(resp.text)
+        return resp.status_code
 
     @staticmethod
     def upload_directory(uploading_from: str, uploading_to: str, zipped: bool) -> None:

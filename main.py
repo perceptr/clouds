@@ -1,7 +1,5 @@
 import argparse
-import yandex_api
-import selectel_api
-import vk_cloud_api as vk_api
+from api import yandex_api, vk_cloud_api as vk_api, selectel_api
 
 parser = argparse.ArgumentParser(
             'PyClouds',
@@ -26,7 +24,7 @@ args = parser.parse_args()
 
 
 def create_yadisk(url="https://cloud-api.yandex.net/v1/disk",
-                  token="y0_AgAAAABkpnbQAADLWwAAAADPHaXMCTSyU3M8TwucAzOBNPZS6nGMg0A") -> yandex_api.MyYaDiskAPI:
+                  token="y0_AgAAAABkpnbQAADLWwAAAADPHaXMCTSyU3M8TwucAzOBNPZS6nGMg0A") -> yandex_api.YandexAPI:
     """
     Creates yandex disk object
     :param url: url to yandex disk
@@ -34,7 +32,7 @@ def create_yadisk(url="https://cloud-api.yandex.net/v1/disk",
     :return: yandex disk object
     """
 
-    return yandex_api.MyYaDiskAPI(url, token)
+    return yandex_api.YandexAPI(url, token)
 
 
 def upload_file(path_to_file: str, path_to_upload_disk: str, platform: str, zipped=False) -> None:

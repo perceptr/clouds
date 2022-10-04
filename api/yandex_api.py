@@ -3,7 +3,7 @@ import os
 import zipfile
 
 
-class MyYaDiskAPI:
+class YandexAPI:
     """
     Yandex Disk API class with all methods for working with Yandex Disk
     """
@@ -46,15 +46,16 @@ class MyYaDiskAPI:
         return requests.delete(f"{self.URL}/resources?path={path}&permanently={permanently}",
                                headers=self.headers)
 
-    def move_folder_or_file(self, path_from: str, path_to: str) -> requests.Response:
+    def move_folder_or_file(self, path_from: str, path_to: str) -> int:
         """
         Moves folder or file from path_from to path_to
         :param path_from: path to folder or file
         :param path_to: path to move folder or file
-        :return: requests.Response
+        :return: int
         """
-        return requests.post(f"{self.URL}/resources/move?from={path_from}&path={path_to}",
+        resp = requests.post(f"{self.URL}/resources/move?from={path_from}&path={path_to}",
                              headers=self.headers)
+        return resp.status_code
 
     def get_user_disk_info_bytes(self) -> str:
         """
@@ -129,7 +130,7 @@ class MyYaDiskAPI:
         return requests.get(f'{self.URL}/resources/upload?path={path_to_upload}&overwrite={replace}',
                             headers=self.headers).json()["href"]
 
-    def upload_file(self, path_to_file: str, path_to_folder_on_yadisk: str, zipped=False, replace=False) -> None:
+    def upload_file(self, path_to_file: str, path_to_folder_on_yadisk: str, zipped=False, replace=False) -> int:
         """
         Uploads file to Yandex Disk
 
@@ -138,7 +139,7 @@ class MyYaDiskAPI:
         :param path_to_folder_on_yadisk: path to folder on Yandex Disk
         :param zipped: if True - zips file before uploading
         :param replace: if True - replaces file if exists, if False - creates new file
-        :return: None
+        :return: int
         """
         res = self.__get_url_for_uploading(path_to_folder_on_yadisk, replace)
         with open(path_to_file, 'rb') as f:
@@ -147,19 +148,22 @@ class MyYaDiskAPI:
                     with zipfile.ZipFile(path_to_file + ".zip", "w") as zip_file:
                         zip_file.write(path_to_file)
                     with open(path_to_file + ".zip", 'rb') as zip_file:
-                        requests.put(res, files={'file': zip_file})
+                        resp = requests.put(res, files={'file': zip_file})
                     os.remove(path_to_file + ".zip")
+                    return resp.status_code
                 else:
-                    requests.put(res, files={'file': f})
+                    resp = requests.put(res, files={'file': f})
+                    return resp.status_code
             except KeyError:
                 print(res)
 
-    def clean_trash(self) -> requests.Response:
+    def clean_trash(self) -> int:
         """
         Cleans trash
-        :return: requests.Response
+        :return: int
         """
-        return requests.delete(f"{self.URL}/trash/resources?path=", headers=self.headers)
+        resp = requests.delete(f"{self.URL}/trash/resources?path=", headers=self.headers)
+        return resp.status_code
 
     def __get_url_for_downloading(self, path_to_download_from: str) -> str:
         """
@@ -170,18 +174,21 @@ class MyYaDiskAPI:
         return requests.get(f"{self.URL}/resources/download?path={path_to_download_from}",
                             headers=self.headers).json()["href"]
 
-    def download_file(self, path_to_downloading_file: str, save_directory: str) -> None:
+    def download_file(self, path_to_downloading_file: str, save_directory: str) -> int:
         """
         Downloads file from Yandex Disk
         :param path_to_downloading_file: path to downloading file
         :param save_directory: path to save file
-        :return: None
+        :return: int
         """
 
         try:
-            got_file = requests.get(self.__get_url_for_downloading(path_to_downloading_file)).content
+            resp = requests.get(self.__get_url_for_downloading(path_to_downloading_file))
+            got_file = resp.content
             with open(save_directory + "/" + path_to_downloading_file.split("/")[-1], "wb") as file:
                 file.write(got_file)
+            return resp.status_code
+
         except KeyError:
             raise Exception(f"Failed to download file {path_to_downloading_file}!")
 
