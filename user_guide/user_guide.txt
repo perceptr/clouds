@@ -1,0 +1,86 @@
+Yandex Api Guide
+
+#########################################################################################
+To Upload file, we need to use the following instruction in terminal:
+(absolute path)
+python3 main.py --upload_file "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/meadow.jpeg" --dir_up "f1/meadow_UPLOAD.jpeg" -p y
+
+to do it with zip:
+python3 main.py --upload_file "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/meadow.jpeg" --dir_up "f1/meadow_UPLOAD_ZIP.zip" -p y -z zip
+
+#########################################################################################
+To Download file, we need to use the following instruction in terminal:
+(absolute path)
+python3 main.py --download_file "f1/meadow_UPLOAD.jpeg" --dir_down "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/" -p y
+
+#########################################################################################
+To get a list of files, we need to use the following instruction in terminal:
+python3 main.py -i -p y
+
+#########################################################################################
+To upload a directory
+
+python3 main.py --upload_directory "/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds" --dir_up "f1" -p y
+
+and zip:
+
+python3 main.py --upload_directory "/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds" --dir_up "f1" -p y -z zip
+
+
+
+
+
+Selectel API
+#########################################################################################
+Upload file:
+python3 main.py --upload_file "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/meadow.jpeg" --dir_up "/f1/meadow_UPLOAD.jpeg" -p s
+
+zip:
+python3 main.py --upload_file "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/meadow.jpeg" --dir_up "/f1/meadow_UPLOAD_ZIP.zip" -p s -z zip
+
+
+#########################################################################################
+Download file:
+python3 main.py --download_file "/f1/meadow_UPLOAD.jpeg" --dir_down "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/" -p s
+
+#########################################################################################
+Get a list of files:
+python3 main.py -i -p s
+
+#########################################################################################
+Upload directory:
+python3 main.py --upload_directory "/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds" --dir_up "/f1" -p s
+
+zip:
+python3 main.py --upload_directory "/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds" --dir_up "/f1" -p s -z zip
+
+#########################################################################################
+
+
+
+VK API
+#########################################################################################
+Upload file:
+python3 main.py --upload_file "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/meadow.jpeg" --dir_up "f1/meadow_UPLOAD.jpeg" -p v
+
+zip:
+python3 main.py --upload_file "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pics/meadow.jpeg" --dir_up "f1/meadow_UPLOAD_ZIP.zip" -p v -z zip
+
+
+#########################################################################################
+Download file:
+python3 main.py --download_file "f1/meadow_UPLOAD.jpeg" --dir_down "/Users/arsenii/Desktop/dsk/pyCourse/cloudsrep/clouds/basic_pic
+s/meadow_UPLOAD.jpeg" -p v
+
+#########################################################################################
+Get a list of files:
+python3 main.py -i -p v
+
+#########################################################################################
+Upload directory:
+python3 main.py --upload_directory "/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds" --dir_up "f1" -p v
+
+zip:
+python3 main.py --upload_directory "/Users/arsenii/Desktop/dsk/pyCourse/pics_for_clouds" --dir_up "f1" -p v -z zip
+
+

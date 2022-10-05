@@ -127,6 +127,7 @@ class YandexAPI:
         :param replace: if True - replaces file if exists, if False - creates new file
         :return: str: url for uploading file
         """
+
         return requests.get(f'{self.URL}/resources/upload?path={path_to_upload}&overwrite={replace}',
                             headers=self.headers).json()["href"]
 
